@@ -1,19 +1,13 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
-import logging
-import uuid
-import graphviz
 from dotenv import load_dotenv
 import groq as Groq
 import re
+import logging
 
 # Load environment variables
 load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-# Set Graphviz path explicitly (adjust the path if needed)
-GRAPHVIZ_PATH = r"C:/Program Files/Graphviz/bin"  # For Vercel, this should work on the server
-os.environ["PATH"] += os.pathsep + GRAPHVIZ_PATH
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -35,17 +29,12 @@ def validate_dot_definition(dot_definition):
     """Validate that the DOT definition follows the basic syntax."""
     return dot_definition.strip().startswith("digraph")
 
-# Generate Flowchart using Groq LLM
+# Generalized Groq Prompt
 def generate_flowchart(description):
     prompt = (
-        f"Create a detailed and colorful flowchart in Graphviz DOT language that illustrates the following steps: {description}. "
-        "Ensure the flowchart is visually appealing with color coding. "
-        "Use distinct colors for different types of nodes and edges: "
-        "- Use light blue for start and end nodes. "
-        "- Use green for process nodes. "
-        "- Use red for decision nodes. "
-        "- Use blue for edges connecting nodes. "
-        "Ensure each node and edge is clearly labeled with a logical flow from start to end."
+        f"Create a flowchart in Graphviz DOT language for the following process: {description}. "
+        "The flowchart should be structured, clear, and visually distinct. "
+        "Use colors and labels to differentiate between start/end, processes, and decisions."
     )
     try:
         response = groq_client.chat.completions.create(
@@ -53,6 +42,7 @@ def generate_flowchart(description):
             model="llama3-8b-8192",
         )
         raw_response = response.choices[0].message.content.strip()
+        logging.debug(f"Groq API raw response: {raw_response}")
         dot_definition = extract_dot_definition(raw_response)
         if dot_definition and validate_dot_definition(dot_definition):
             return dot_definition
@@ -62,44 +52,27 @@ def generate_flowchart(description):
         logging.error(f"Groq API Error: {e}")
         return None
 
-# Render Flowchart to an Image
-def render_flowchart(dot_definition, output_folder="static/flowcharts"):
-    os.makedirs(output_folder, exist_ok=True)
-    file_id = uuid.uuid4().hex
-    file_path = os.path.join(output_folder, f"flowchart_{file_id}")
-    
-    try:
-        flowchart = graphviz.Source(dot_definition)
-        output_path = f"{file_path}.png"
-        flowchart.render(file_path, format="png", cleanup=True)
-        return output_path
-    except Exception as e:
-        logging.error(f"Graphviz Rendering Error: {e}")
-        logging.error(f"DOT definition that failed: {dot_definition}")
-        return None
-
-# Routes
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/generate_flowchart", methods=["POST"])
+@app.route('/generate_flowchart', methods=['POST'])
 def generate():
-    data = request.json
-    description = data.get("description", "")
+    try:
+        data = request.json
+        description = data.get('description', '')
 
-    if not description:
-        return jsonify({"error": "No description provided"}), 400
+        if not description:
+            return jsonify({"error": "No description provided"}), 400
 
-    dot_definition = generate_flowchart(description)
-    if not dot_definition:
-        return jsonify({"error": "Failed to generate flowchart"}), 500
+        dot_definition = generate_flowchart(description)
+        if not dot_definition:
+            return jsonify({"error": "Failed to generate flowchart"}), 500
 
-    output_path = render_flowchart(dot_definition)
-    if not output_path:
-        return jsonify({"error": "Failed to render flowchart"}), 500
+        return jsonify({"dot_definition": dot_definition})
+    except Exception as e:
+        logging.error(f"Error in /generate_flowchart endpoint: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
-    return jsonify({"flowchart_url": f"/{output_path}"})
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

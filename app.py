@@ -12,7 +12,7 @@ load_dotenv()
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Set Graphviz path explicitly (adjust the path if needed)
-GRAPHVIZ_PATH = r"/usr/local/bin"  # For Vercel, this should work on the server
+GRAPHVIZ_PATH = r"C:\Program Files\Graphviz\bin"  # For Vercel, this should work on the server
 os.environ["PATH"] += os.pathsep + GRAPHVIZ_PATH
 
 # Initialize Flask app

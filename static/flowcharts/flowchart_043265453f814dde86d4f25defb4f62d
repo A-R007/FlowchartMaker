@@ -1,0 +1,29 @@
+digraph Cardiac_Output {
+  node[shape=box, style=filled];
+  edge[arrowhead=vee, dir=forward];
+
+  start[label="Start"]
+  calculateHR[label="Calculate Heart Rate ( HR )"]
+  calculateSV[label="Calculate Stroke Volume ( SV )"]
+  calculateCO[label="Calculate Cardiac Output ( CO )"]
+  decisionHR[label="Is HR below 60 bpm?", style=filled, color=red]
+  decisionSV[label="Is SV below 50 mL?", style=filled, color=red]
+  decisionCO[label="Is CO below 5 L/min?", style=filled, color=red]
+  regulateHR[label="Regulate HR ( e.g. via sympathetic nervous system )", style=filled, color=blue]
+  regulateSV[label="Regulate SV ( e.g. via Frank-Starling mechanism )", style=filled, color=blue]
+  regulateCO[label="Regulate CO ( e.g. via autonomic nervous system )", style=filled, color=blue]
+  output[label="Output: Cardiac Output ( CO )", style=filled, color=green]
+
+  start -> calculateHR[label="Calculate HR"]
+  calculateHR -> decisionHR[label="Is HR below 60 bpm?"]
+  decisionHR->yes[label="Yes", style=filled, color=red] -> regulateHR[label="Regulate HR"]
+  decisionHR -> no[label="No", style=filled, color=red] -> calculateSV[label="Calculate SV"]
+  calculateSV -> decisionSV[label="Is SV below 50 mL?"]
+  decisionSV -> yes[label="Yes", style=filled, color=red] -> regulateSV[label="Regulate SV"]
+  decisionSV -> no[label="No", style=filled, color=red] -> calculateCO[label="Calculate CO"]
+  calculateCO -> decisionCO[label="Is CO below 5 L/min?"]
+  decisionCO -> yes[label="Yes", style=filled, color=red] -> regulateCO[label="Regulate CO"]
+  decisionCO -> no[label="No", style=filled, color=red] -> output[label="Output: CO"]
+
+  output -> end[label="End"]
+}

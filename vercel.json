@@ -4,13 +4,20 @@
       {
         "src": "app.py",
         "use": "@vercel/python"
+      },
+      {
+        "src": "templates/index.html",
+        "use": "@vercel/static"
       }
     ],
     "routes": [
       {
-        "src": "/(.*)",
+        "src": "/.*",
         "dest": "app.py"
       }
-    ]
+    ],
+    "env": {
+      "GROQ_API_KEY": "@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"
+    }
   }
   

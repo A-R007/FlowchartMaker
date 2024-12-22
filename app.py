@@ -52,7 +52,7 @@ def generate_flowchart(description):
         logging.error(f"Groq API Error: {e}")
         return None
 
-@app.route('/')
+@app.route('//')
 def index():
     return render_template('index.html')
 

@@ -101,15 +101,3 @@ Contributions are welcome! Please fork the repository, make your changes, and su
 
 This project is licensed under the MIT License.
 ```
-
-### Explanation:
-- **Features**: Lists the main functionalities of the application.
-- **Prerequisites**: Details the required software versions.
-- **Setup Instructions**: Provides a step-by-step guide for setting up and running the app locally.
-- **Deployment**: Explains how to deploy the app on Render.
-- **Usage**: Describes the flow of using the app, including generating the flowchart.
-- **Troubleshooting**: Provides common issues and solutions.
-- **Contributing**: Instructions for contributing to the project.
-- **License**: Mentions the project's license (MIT License in this case).
-
-Feel free to customize it based on your preferences or additional features!

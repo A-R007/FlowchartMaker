@@ -84,4 +84,6 @@ def generate():
         return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use the PORT environment variable for deployment (default to 5000 for local dev)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(debug=False, host="0.0.0.0", port=port)

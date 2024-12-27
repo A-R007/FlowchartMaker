@@ -27,8 +27,8 @@ Before running the app, ensure the following are installed:
 Clone the project to your local machine using the following command:
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone <repo-link>
+cd <your-folder>
 ```
 
 ### 2. Create and Activate a Virtual Environment
